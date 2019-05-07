@@ -9,17 +9,15 @@ async function getUser(id) {
       Authorization: `Bearer ${process.env.VIGE_TOKEN}`
     },
     method: "get",
-    baseUrl: url
+    url
   });
   return resp.data;
 }
 
 async function getChannels(nextCursor = null) {
-  var url = `https://slack.com/api/conversations.list?token=${
-    process.env.VIGE_TOKEN
-  }`;
+  var url = "https://slack.com/api/conversations.list";
   if (nextCursor) {
-    url = url + "&cursor=" + nextCursor;
+    url = url + "?cursor=" + nextCursor;
   }
   return axios({
     headers: {
@@ -27,7 +25,7 @@ async function getChannels(nextCursor = null) {
       Authorization: `Bearer ${process.env.VIGE_TOKEN}`
     },
     method: "get",
-    baseUrl: url
+    url
   });
 }
 
