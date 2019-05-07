@@ -40,7 +40,7 @@ async function sendLeaderBoard(respUrl) {
   console.log("sending leaderboard!");
   axios({
     method: "post",
-    baseUrl: respUrl,
+    url: respUrl,
     headers: {
       "Content-type": "application/json"
     },
