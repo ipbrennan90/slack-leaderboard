@@ -14,6 +14,24 @@ app.get("/", cache(500), async (_, res) => {
   res.send(resp);
 });
 
+app.post("/", (req, res) => {
+  const responseUrl = req.data.response_url;
+  console.log(responseUrl);
+  resp = {
+    response_type: "in_channel",
+    text: "Getting your leaderboard ready",
+    attachments: [
+      {
+        text: "do it"
+      },
+      {
+        text: "do it"
+      }
+    ]
+  };
+  res.send(resp);
+});
+
 const start = port => {
   console.log("starting server");
   app.listen(port);
