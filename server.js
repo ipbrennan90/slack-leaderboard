@@ -15,18 +15,10 @@ app.get("/", cache(500), async (_, res) => {
 });
 
 app.post("/", (req, res) => {
-  console.log(req);
+  console.log(req.body.response_url);
   resp = {
     response_type: "in_channel",
-    text: "Getting your leaderboard ready",
-    attachments: [
-      {
-        text: "do it"
-      },
-      {
-        text: "do it"
-      }
-    ]
+    text: "Getting your leaderboard ready, get pump'd"
   };
   res.send(resp);
 });
