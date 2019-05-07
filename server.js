@@ -3,6 +3,9 @@ const slackData = require("./slack-data");
 const cache = require("./cache");
 const { channelSort, getAllChannels } = slackData;
 const app = express();
+var bodyParser = require("body-parser");
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 app.get("/", cache(500), async (_, res) => {
   const channels = await getAllChannels();
@@ -15,7 +18,6 @@ app.get("/", cache(500), async (_, res) => {
 });
 
 app.post("/", (req, res) => {
-  console.log(req);
   console.log(req.body);
   resp = {
     response_type: "in_channel",
