@@ -15,7 +15,7 @@ app.get("/", cache(500), async (_, res) => {
 });
 
 app.post("/", (req, res) => {
-  console.log(req.body.response_url);
+  console.log(req.body);
   resp = {
     response_type: "in_channel",
     text: "Getting your leaderboard ready, get pump'd"
