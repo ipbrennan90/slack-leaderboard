@@ -1,7 +1,7 @@
 const express = require("express");
 const slackData = require("./slack-data");
 const cache = require("./cache");
-const axios = require("axios")
+const axios = require("axios");
 const { channelSort, getAllChannels } = slackData;
 const app = express();
 var bodyParser = require("body-parser");
@@ -27,27 +27,29 @@ app.post("/", (req, res) => {
   res.send(resp);
 });
 
-function sendLeaderBoard(respUrl) {
+async function sendLeaderBoard(respUrl) {
   const channels = await getAllChannels();
   const sorted = await channelSort(channels);
-  const top_ten = sorted.slice(0,10)
+  const top_ten = sorted.slice(0, 10);
   const attachments = top_ten.map(channelRoyalty => {
-    const text = `${channelRoyalty.rank + 1}. ${channelRoyalty.name} @ ${channelRoyalty.channelCount}`
-    return {text}
-  })
-  console.log('sending leaderboard!')
+    const text = `${channelRoyalty.rank + 1}. ${channelRoyalty.name} @ ${
+      channelRoyalty.channelCount
+    }`;
+    return { text };
+  });
+  console.log("sending leaderboard!");
   axios({
-    method: 'post',
+    method: "post",
     baseUrl: respUrl,
     headers: {
-      'Content-type': 'application/json'
+      "Content-type": "application/json"
     },
     data: {
       response_type: "in_channel",
       text: "Today's leaderboard:",
       attachments
     }
-  })
+  });
 }
 
 const start = port => {
