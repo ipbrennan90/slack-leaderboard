@@ -12,9 +12,10 @@ function channelCreators(channels) {
   return creators;
 }
 
-function buildCreatorFrom(name, creatorChannels) {
+function buildCreatorFrom(name, creatorChannels, creatorId) {
   const channelCount = creatorChannels.length;
   return {
+    id: creatorId,
     rank: null,
     name,
     channelCount,
@@ -41,23 +42,26 @@ function buildUserSortableChannelsArray(creators) {
     creators.map(async creator => {
       try {
         const creatorResp = await getUser(creator.creator);
-        const {
-          profile: { real_name: name }
-        } = creatorResp;
-        return buildCreatorFrom(name, creator.channels);
+        const name = creatorResp && creatorResp.profile.real_name;
+        return buildCreatorFrom(name, creator.channels, creator.creator);
       } catch (e) {
         console.log(e);
       }
     })
   );
 }
+
+function channelsForCreator(creatorId, channels) {
+  return channels
+    .filter(channel => channel.creator === creatorId)
+    .map(channel => channel.name);
+}
+
 async function channelSort(channels) {
   const creators = channelCreators(channels);
   const creatorChannels = creators.map(creator => ({
     creator,
-    channels: channels
-      .filter(channel => channel.creator === creator)
-      .map(channel => channel.name)
+    channels: channelsForCreator(creator, channels)
   }));
 
   creatorChannels.sort((a, b) => b.channels.length - a.channels.length);
@@ -69,4 +73,4 @@ async function channelSort(channels) {
   return sortedWithRank;
 }
 
-module.exports = { getAllChannels, channelSort };
+module.exports = { getAllChannels, channelSort, channelsForCreator };

@@ -2,13 +2,14 @@ const express = require("express");
 const slackData = require("./slack-data");
 const cache = require("./cache");
 const axios = require("axios");
-const { channelSort, getAllChannels } = slackData;
+const { channelSort, getAllChannels, channelsForCreator } = slackData;
+const { getUser } = require("./slack-api");
 const app = express();
 var bodyParser = require("body-parser");
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-app.get("/", cache(500), async (_, res) => {
+app.get("/", cache(86400), async (_, res) => {
   const channels = await getAllChannels();
   const sorted = await channelSort(channels);
   const resp = {
@@ -16,6 +17,17 @@ app.get("/", cache(500), async (_, res) => {
     channelTotal: sorted.length
   };
   res.send(resp);
+});
+
+app.get("/users/:userId", cache(86400), async (req, res) => {
+  const userId = req.params.userId;
+  const user = await getUser(userId);
+  const channels = await getAllChannels();
+  const userChannels = channelsForCreator(userId, channels);
+  const response = {
+    data: { ...user, channels: userChannels }
+  };
+  res.send(response);
 });
 
 app.post("/", (req, res) => {
@@ -37,7 +49,6 @@ async function sendLeaderBoard(respUrl) {
     }`;
     return { text };
   });
-  console.log("sending leaderboard!");
   axios({
     method: "post",
     url: respUrl,
@@ -53,7 +64,6 @@ async function sendLeaderBoard(respUrl) {
 }
 
 const start = port => {
-  console.log("starting server");
   app.listen(port);
   console.log(`server listening on ${port}`);
 };
